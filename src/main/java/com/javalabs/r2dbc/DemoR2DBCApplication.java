@@ -37,8 +37,8 @@ public class DemoR2DBCApplication {
 
 	private Flux<Person> getPeople() {
 		return Flux.just(
-				new Person(null, "John", "Doe", "john@mail"),
-				new Person(null, "Jane", "Doe", "jane@mail")
+				new Person(null, "John", "Doe", "john@mail", "johnspassword"),
+				new Person(null, "Jane", "Doe", "jane@mail", "janespassword")
 		);
 	}
 
