@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -36,7 +37,6 @@ public class PersonController {
                     logger.debug("\nFOUND:" + value.toString() + "\n");
 
                     authenticated.set(password.equals(value.getPassword()));
-
                     found.set(true);
                 },
                 error -> error.printStackTrace()
@@ -51,6 +51,16 @@ public class PersonController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping(name ="/login",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity login(@ModelAttribute("merchant") Person merchant) {
+        logger.debug("\nlogin, email:" + merchant.getEmail() + ", password:" + merchant.getPassword() + "\n");
+
+        return login(merchant.getEmail(), merchant.getPassword());
     }
 
     @GetMapping("/flux")
