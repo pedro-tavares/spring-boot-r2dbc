@@ -36,7 +36,10 @@ public class DemoR2DBCApplication {
 	}
 
 	private Flux<Person> getPeople() {
-		return Flux.just(new Person(null, "John", "Doe"), new Person(null, "Jane", "Doe"));
+		return Flux.just(
+				new Person(null, "John", "Doe", "john@mail"),
+				new Person(null, "Jane", "Doe", "jane@mail")
+		);
 	}
 
 	private Mono<Integer> executeSql(DatabaseClient client, String sql) {

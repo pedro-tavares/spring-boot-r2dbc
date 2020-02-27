@@ -9,4 +9,6 @@ public interface PersonRepository extends ReactiveCrudRepository<Person, Long> {
     @Query("SELECT * FROM person p WHERE p.firstname = :firstname")
     public Mono<Person> findByFirstName(String firstname);
 
+    @Query("SELECT * FROM person p WHERE p.email = :email")
+    public Mono<Person> findByEmail(String email);
 }
