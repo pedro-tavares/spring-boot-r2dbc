@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -27,18 +28,29 @@ public class PersonController {
         logger.debug("\nlogin, email:" + email + ", password:" + password  + "\n");
 
         AtomicBoolean found = new AtomicBoolean(false);
+        AtomicBoolean authenticated = new AtomicBoolean(false);
         Mono<Person> personMono = personRepository.findByEmail(email);
 
         personMono.subscribe(
                 value -> {
                     logger.debug("\nFOUND:" + value.toString() + "\n");
 
+                    authenticated.set(password.equals(value.getPassword()));
+
                     found.set(true);
                 },
                 error -> error.printStackTrace()
         );
 
-        return found.get() ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+        if (found.get()) {
+            if (authenticated.get()) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/flux")
