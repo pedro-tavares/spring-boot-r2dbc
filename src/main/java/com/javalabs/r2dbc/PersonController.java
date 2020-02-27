@@ -12,6 +12,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 @CrossOrigin(origins = {"http://127.0.0.1:8088","http://localhost:8088"}, maxAge = 3600)
 @RestController
@@ -26,37 +27,39 @@ public class PersonController {
 
 //    @GetMapping("/login/{email}/{password}")
 //    @PostMapping("/login/{email}/{password}")
+    @ResponseBody
     public ResponseEntity login(@PathVariable String email, @PathVariable String password) {
         logger.debug("\nlogin, email:" + email + ", password:" + password  + "\n");
 
         AtomicBoolean found = new AtomicBoolean(false);
         AtomicBoolean authenticated = new AtomicBoolean(false);
+        AtomicReference<ResponseEntity> result = new AtomicReference<>(ResponseEntity.notFound().build());
         Mono<Person> personMono = personRepository.findByEmail(email);
 
-        final ResponseEntity subscribe = (ResponseEntity) personMono.subscribe(
+        personMono.subscribe(
                 value -> {
                     logger.debug("\nFOUND:" + value.toString() + "\n");
 
                     found.set(true);
-                    authenticated.set(password.equals(((Person) value).getPassword()));
+                    authenticated.set(password.equals(value.getPassword()));
 
                     if (authenticated.get()) {
                         logger.debug("\nAUTHENTICATED:" + email + "\n");
 
-                        return ResponseEntity.ok().build();
+                        result.set(ResponseEntity.ok().build());
                     } else {
                         logger.debug("\nUNAUTHORIZED:" + email + "\n");
 
-                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                        result.set(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
                     }
                 },
                 error -> {
                     error.printStackTrace();
-
-                    return ResponseEntity.notFound().build();
+                    result.set(ResponseEntity.notFound().build());
                 }
         );
-        return subscribe;
+
+        return result.get();
     }
 
     @PostMapping(value ="/login",
