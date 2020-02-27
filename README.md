@@ -14,3 +14,7 @@ Additionally, you can run the Spring boot application by using Maven:
 mvn spring-boot:run
 ```
 
+```
+http://localhost:8080/person/flux
+http://localhost:8080/person/mono/{firstname}
+```
