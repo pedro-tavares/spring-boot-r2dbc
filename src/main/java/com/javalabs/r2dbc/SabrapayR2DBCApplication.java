@@ -17,10 +17,10 @@ import java.util.stream.BaseStream;
 
 @Slf4j
 @SpringBootApplication
-public class DemoR2DBCApplication {
+public class SabrapayR2DBCApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DemoR2DBCApplication.class, args);
+		SpringApplication.run(SabrapayR2DBCApplication.class, args);
 	}
 
 	@Bean
