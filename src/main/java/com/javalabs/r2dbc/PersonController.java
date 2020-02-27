@@ -13,8 +13,9 @@ import reactor.core.publisher.Mono;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@CrossOrigin(origins = {"http://127.0.0.1:8088","http://localhost:8088"}, maxAge = 3600)
 @RestController
-@RequestMapping("/person")
+@RequestMapping("/merchants")
 @RequiredArgsConstructor
 public class PersonController {
 
@@ -23,8 +24,8 @@ public class PersonController {
     @Autowired
     private final PersonRepository personRepository;
 
-    @GetMapping("/login/{email}/{password}")
-    @PostMapping("/login/{email}/{password}")
+//    @GetMapping("/login/{email}/{password}")
+//    @PostMapping("/login/{email}/{password}")
     public ResponseEntity login(@PathVariable String email, @PathVariable String password) {
         logger.debug("\nlogin, email:" + email + ", password:" + password  + "\n");
 
@@ -32,33 +33,38 @@ public class PersonController {
         AtomicBoolean authenticated = new AtomicBoolean(false);
         Mono<Person> personMono = personRepository.findByEmail(email);
 
-        personMono.subscribe(
+        final ResponseEntity subscribe = (ResponseEntity) personMono.subscribe(
                 value -> {
                     logger.debug("\nFOUND:" + value.toString() + "\n");
 
-                    authenticated.set(password.equals(value.getPassword()));
                     found.set(true);
-                },
-                error -> error.printStackTrace()
-        );
+                    authenticated.set(password.equals(((Person) value).getPassword()));
 
-        if (found.get()) {
-            if (authenticated.get()) {
-                return ResponseEntity.ok().build();
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+                    if (authenticated.get()) {
+                        logger.debug("\nAUTHENTICATED:" + email + "\n");
+
+                        return ResponseEntity.ok().build();
+                    } else {
+                        logger.debug("\nUNAUTHORIZED:" + email + "\n");
+
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                    }
+                },
+                error -> {
+                    error.printStackTrace();
+
+                    return ResponseEntity.notFound().build();
+                }
+        );
+        return subscribe;
     }
 
-    @PostMapping(name ="/login",
+    @PostMapping(value ="/login",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity login(@ModelAttribute("merchant") Person merchant) {
-        logger.debug("\nlogin, email:" + merchant.getEmail() + ", password:" + merchant.getPassword() + "\n");
+//        logger.debug("\nlogin, email:" + merchant.getEmail() + ", password:" + merchant.getPassword() + "\n");
 
         return login(merchant.getEmail(), merchant.getPassword());
     }
