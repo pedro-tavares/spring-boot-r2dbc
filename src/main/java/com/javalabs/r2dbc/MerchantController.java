@@ -34,9 +34,9 @@ public class MerchantController {
         AtomicBoolean found = new AtomicBoolean(false);
         AtomicBoolean authenticated = new AtomicBoolean(false);
         AtomicReference<ResponseEntity> result = new AtomicReference<>(ResponseEntity.notFound().build());
-        Mono<Merchant> personMono = merchantRepository.findByEmail(email);
+        Mono<Merchant> merchantMono = merchantRepository.findByEmail(email);
 
-        personMono.subscribe(
+        merchantMono.subscribe(
                 value -> {
                     LOG.debug("\nFOUND:" + value.toString() + "\n");
 
