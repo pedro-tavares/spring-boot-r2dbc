@@ -24,7 +24,7 @@ public class SabrapayR2DBCApplication {
 	}
 
 	@Bean
-	public ApplicationRunner seeder(DatabaseClient client, PersonRepository repository) {
+	public ApplicationRunner seeder(DatabaseClient client, MerchantRepository repository) {
 		return args -> getSchema()
 			.flatMap(sql -> executeSql(client, sql))
 			.doOnSuccess(count -> log.info("Schema created, rows updated: {}", count))
@@ -32,13 +32,13 @@ public class SabrapayR2DBCApplication {
 			.doOnSuccess(v -> log.info("Repository cleared"))
 			.thenMany(getPeople())
 			.flatMap(repository::save)
-			.subscribe(person -> log.info("Person saved: {}", person));
+			.subscribe(merchant -> log.info("Merchant saved: {}", merchant));
 	}
 
-	private Flux<Person> getPeople() {
+	private Flux<Merchant> getPeople() {
 		return Flux.just(
-				new Person(null, "John", "Doe", "john@mail", "johnspassword"),
-				new Person(null, "Jane", "Doe", "jane@mail", "janespassword")
+				new Merchant(null, "John Doe", "John Doe", "john@mail", "johnspassword", "Active"),
+				new Merchant(null, "Jane Doe", "Jane Doe", "jane@mail", "janespassword", "Active")
 		);
 	}
 

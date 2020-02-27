@@ -15,7 +15,7 @@ mvn spring-boot:run
 ```
 
 ```
-http://localhost:8080/person/flux
-http://localhost:8080/person/mono/name/{firstname}
-http://localhost:8080/person/mono/email/{email}
+http://localhost:8080/merchant/flux
+http://localhost:8080/merchant/mono/name/{firstname}
+http://localhost:8080/merchant/mono/email/{email}
 ```

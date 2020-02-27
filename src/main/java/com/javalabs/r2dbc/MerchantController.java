@@ -18,37 +18,37 @@ import java.util.concurrent.atomic.AtomicReference;
 @RestController
 @RequestMapping("/merchants")
 @RequiredArgsConstructor
-public class PersonController {
+public class MerchantController {
 
-    private Logger logger = LoggerFactory.getLogger(PersonController.class);
+    private Logger LOG = LoggerFactory.getLogger(MerchantController.class);
 
     @Autowired
-    private final PersonRepository personRepository;
+    private final MerchantRepository merchantRepository;
 
 //    @GetMapping("/login/{email}/{password}")
 //    @PostMapping("/login/{email}/{password}")
     @ResponseBody
     public ResponseEntity login(@PathVariable String email, @PathVariable String password) {
-        logger.debug("\nlogin, email:" + email + ", password:" + password  + "\n");
+        LOG.debug("\nlogin, email:" + email + ", password:" + password  + "\n");
 
         AtomicBoolean found = new AtomicBoolean(false);
         AtomicBoolean authenticated = new AtomicBoolean(false);
         AtomicReference<ResponseEntity> result = new AtomicReference<>(ResponseEntity.notFound().build());
-        Mono<Person> personMono = personRepository.findByEmail(email);
+        Mono<Merchant> personMono = merchantRepository.findByEmail(email);
 
         personMono.subscribe(
                 value -> {
-                    logger.debug("\nFOUND:" + value.toString() + "\n");
+                    LOG.debug("\nFOUND:" + value.toString() + "\n");
 
                     found.set(true);
                     authenticated.set(password.equals(value.getPassword()));
 
                     if (authenticated.get()) {
-                        logger.debug("\nAUTHENTICATED:" + email + "\n");
+                        LOG.debug("\nAUTHENTICATED:" + email + "\n");
 
                         result.set(ResponseEntity.ok().build());
                     } else {
-                        logger.debug("\nUNAUTHORIZED:" + email + "\n");
+                        LOG.debug("\nUNAUTHORIZED:" + email + "\n");
 
                         result.set(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
                     }
@@ -66,25 +66,23 @@ public class PersonController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity login(@ModelAttribute("merchant") Person merchant) {
-//        logger.debug("\nlogin, email:" + merchant.getEmail() + ", password:" + merchant.getPassword() + "\n");
-
+    public ResponseEntity login(@ModelAttribute("merchant") Merchant merchant) {
         return login(merchant.getEmail(), merchant.getPassword());
     }
 
     @GetMapping("/flux")
-    public Flux<Person> findAll() {
-        return personRepository.findAll();
+    public Flux<Merchant> findAll() {
+        return merchantRepository.findAll();
     }
 
-    @GetMapping("/mono/name/{firstname}")
-    public Mono<Person> findByFirstName(@PathVariable String firstname) {
-        return personRepository.findByFirstName(firstname);
+    @GetMapping("/mono/name/{registeredName}")
+    public Mono<Merchant> findByRegisteredName(@PathVariable String registeredName) {
+        return merchantRepository.findByRegisteredName(registeredName);
     }
 
     @GetMapping("/mono/email/{email}")
-    public Mono<Person> findByEmail(@PathVariable String email) {
-        return personRepository.findByEmail(email);
+    public Mono<Merchant> findByEmail(@PathVariable String email) {
+        return merchantRepository.findByEmail(email);
     }
 
 }

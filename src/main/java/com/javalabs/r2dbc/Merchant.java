@@ -8,11 +8,12 @@ import org.springframework.data.annotation.Id;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Person {
+public class Merchant {
     @Id
     private Long id;
-    private String firstname;
-    private String lastname;
+    private String registeredName;
+    private String doingBusinessAs;
     private String email;
     private String password;
+    private String status;
 }
