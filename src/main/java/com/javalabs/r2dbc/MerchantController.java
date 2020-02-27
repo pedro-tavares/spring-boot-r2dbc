@@ -26,7 +26,6 @@ public class MerchantController {
     private final MerchantRepository merchantRepository;
 
 //    @GetMapping("/login/{email}/{password}")
-//    @PostMapping("/login/{email}/{password}")
     @ResponseBody
     public ResponseEntity login(@PathVariable String email, @PathVariable String password) {
         LOG.debug("\nlogin, email:" + email + ", password:" + password  + "\n");
