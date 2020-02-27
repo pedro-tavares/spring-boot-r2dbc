@@ -6,7 +6,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api/person")
+@RequestMapping("/person")
 @RequiredArgsConstructor
 public class PersonController {
     private final PersonRepository repository;
