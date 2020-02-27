@@ -1,4 +1,4 @@
-package be.g00glen00b.apps.r2dbc;
+package com.javalabs.r2dbc;
 
 import org.springframework.data.r2dbc.repository.query.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;

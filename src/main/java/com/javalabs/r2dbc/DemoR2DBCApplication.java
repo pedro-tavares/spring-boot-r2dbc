@@ -1,4 +1,4 @@
-package be.g00glen00b.apps.r2dbc;
+package com.javalabs.r2dbc;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;

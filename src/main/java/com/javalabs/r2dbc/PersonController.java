@@ -1,4 +1,4 @@
-package be.g00glen00b.apps.r2dbc;
+package com.javalabs.r2dbc;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
